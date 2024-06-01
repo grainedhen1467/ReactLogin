@@ -5,6 +5,12 @@ const RequireAuth = ({ allowedRoles }) => {
     const { auth } = useAuth();
     const location = useLocation();
 
+    // return (
+    //     auth?.user
+    //         ? <Outlet />
+    //         : <Navigate to="/login" state={{ from: location }} replace />
+    // );
+
     return (
         auth?.roles?.find(role => allowedRoles?.includes(role))
             ? <Outlet /> //Any child components of RequireAuth will be protected by this line and the line above.

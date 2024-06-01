@@ -1,7 +1,6 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import './index.css'
 import { AuthProvider } from './context/AuthProvider.jsx';
 import Register from "./Register";
 import Login from "./components/Login";
@@ -12,16 +11,17 @@ import Admin from "./components/Admin";
 import Missing from "./components/Missing";
 import Unauthorized from "./components/Unauthorized";
 import Lounge from "./components/Lounge";
-import RequireAuth from "./components/RequireAuth.jsx";
 import LinkPage from "./components/LinkPage";
+import RequireAuth from "./components/RequireAuth.jsx";
+import './index.css'
 
 // This is a lookup an optional lookup table it can make it easier to deal with codes that are matched with some value and it gives autocompletion. Now you donn't have to remember cryptic numbers.
 // You may also want to avoid this if you don't want people to easily understand your descriptions
-// const ROLES = { 
-//     "User": 2001,
-//     "Editor": 1984,
-//     "Admin": 5150
-// };
+const ROLES = { 
+    "User": 2001,
+    "Editor": 1984,
+    "Admin": 5150
+};
 
 const router = createBrowserRouter([
     {
@@ -47,20 +47,40 @@ const router = createBrowserRouter([
             },
             // we want to protect these routes
             {
-                index: true,
-                element: <Home /> 
-            },
-            {  
-                path: "editor",
-                element: <Editor />
-            },
-            {
-                path: "admin",
-                element: <Admin />
+                element: <RequireAuth allowedRoles={[ROLES.User]}/>,
+                children: [
+                    {
+                        index: true,
+                        element: <Home /> 
+                    }
+                ]
             },
             {
-                path: "lounge",
-                element: <Lounge />
+                element: <RequireAuth allowedRoles={[ROLES.Editor]}/>,
+                children: [
+                    {
+                        path: "editor",
+                        element: <Editor />
+                    }
+                ]
+            },
+            {
+                element: <RequireAuth allowedRoles={[ROLES.Admin]}/>,
+                children: [
+                    {
+                        path: "admin",
+                        element: <Admin />
+                    }
+                ]
+            },
+            {
+                element: <RequireAuth allowedRoles={[ROLES.Admin, ROLES.Editor]}/>,
+                children: [
+                    {
+                        path: "lounge",
+                        element: <Lounge />
+                    }
+                ]
             },
             // catch all
             {
@@ -78,49 +98,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         </AuthProvider>
     </React.StrictMode>,
 );
-
-// {
-//     element: <RequireAuth />,
-//     props: { allowedRoles: [ROLES.User] },
-//     children: [
-//         {
-//             index: true,
-//             element: <Home />
-//         }
-//     ]
-// },
-// {
-//     element: <RequireAuth />,
-//     props: { allowedRoles: [ROLES.Editor] },
-//     children: [
-//         {
-//             path: "editor",
-//             element: <Editor />
-//         }
-//     ]
-// },
-// {
-//     element: <RequireAuth />,
-//     props: { allowedRoles: [ROLES.Admin] },
-//     children: [
-//         {
-//             path: "admin",
-//             element: <Admin />
-//         }
-//     ]
-// },
-// {
-//     element: <RequireAuth />,
-//     props: { allowedRoles: [ROLES.Admin, ROLES.Editor] },
-//     children: [
-//         {
-//             path: "lounge",
-//             element: <Lounge />
-//         }
-//     ]
-// },
-// // catch all
-// {
-//     path: "*",
-//     element: <Missing />
-// }
