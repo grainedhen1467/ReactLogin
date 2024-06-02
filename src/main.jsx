@@ -1,6 +1,8 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import { disableReactDevTools } from '@fvilers/disable-react-devtools';
+// import { jwtDecode } from "jwt-decode";
 import { AuthProvider } from './context/AuthProvider.jsx';
 import Register from "./components/Register";
 import Login from "./components/Login";
@@ -15,6 +17,10 @@ import LinkPage from "./components/LinkPage";
 import RequireAuth from "./components/RequireAuth.jsx";
 import PersistLogin from './components/PersistLogin.jsx';
 import './index.css'
+
+if (process.env.NODE_ENV === 'production') {
+    disableReactDevTools();
+}
 
 // This is a lookup an optional lookup table it can make it easier to deal with codes that are matched with some value and it gives autocompletion. Now you donn't have to remember cryptic numbers.
 // You may also want to avoid this if you don't want people to easily understand your descriptions
