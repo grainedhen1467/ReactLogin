@@ -2,7 +2,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { AuthProvider } from './context/AuthProvider.jsx';
-import Register from "./Register";
+import Register from "./components/Register";
 import Login from "./components/Login";
 import Home from "./components/Home";
 import Layout from "./components/Layout";
@@ -13,6 +13,7 @@ import Unauthorized from "./components/Unauthorized";
 import Lounge from "./components/Lounge";
 import LinkPage from "./components/LinkPage";
 import RequireAuth from "./components/RequireAuth.jsx";
+import PersistLogin from './components/PersistLogin.jsx';
 import './index.css'
 
 // This is a lookup an optional lookup table it can make it easier to deal with codes that are matched with some value and it gives autocompletion. Now you donn't have to remember cryptic numbers.
@@ -47,41 +48,47 @@ const router = createBrowserRouter([
             },
             // we want to protect these routes
             {
-                element: <RequireAuth allowedRoles={[ROLES.User]}/>,
+                element: <PersistLogin />,
                 children: [
                     {
-                        index: true,
-                        element: <Home /> 
-                    }
-                ]
-            },
-            {
-                element: <RequireAuth allowedRoles={[ROLES.Editor]}/>,
-                children: [
+                        element: <RequireAuth allowedRoles={[ROLES.User]}/>,
+                        children: [
+                            {
+                                index: true,
+                                element: <Home /> 
+                            }
+                        ]
+                    },
                     {
-                        path: "editor",
-                        element: <Editor />
-                    }
-                ]
-            },
-            {
-                element: <RequireAuth allowedRoles={[ROLES.Admin]}/>,
-                children: [
+                        element: <RequireAuth allowedRoles={[ROLES.Editor]}/>,
+                        children: [
+                            {
+                                path: "editor",
+                                element: <Editor />
+                            }
+                        ]
+                    },
                     {
-                        path: "admin",
-                        element: <Admin />
-                    }
-                ]
-            },
-            {
-                element: <RequireAuth allowedRoles={[ROLES.Admin, ROLES.Editor]}/>,
-                children: [
+                        element: <RequireAuth allowedRoles={[ROLES.Admin]}/>,
+                        children: [
+                            {
+                                path: "admin",
+                                element: <Admin />
+                            }
+                        ]
+                    },
                     {
-                        path: "lounge",
-                        element: <Lounge />
-                    }
+                        element: <RequireAuth allowedRoles={[ROLES.Admin, ROLES.Editor]}/>,
+                        children: [
+                            {
+                                path: "lounge",
+                                element: <Lounge />
+                            }
+                        ]
+                    },
                 ]
             },
+
             // catch all
             {
                 path: "*",
@@ -92,9 +99,9 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-    <React.StrictMode>
+    <>
         <AuthProvider>
             <RouterProvider router={router} />
         </AuthProvider>
-    </React.StrictMode>,
+    </>,
 );

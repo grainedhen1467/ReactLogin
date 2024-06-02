@@ -7,11 +7,11 @@ const RequireAuth = ({ allowedRoles }) => {
 
     return (
         auth?.roles?.find(role => allowedRoles?.includes(role))
-            ? <Outlet /> //Any child components of RequireAuth will be protected by this line and the line above.
-            : auth?.user
+            ? <Outlet />
+            : auth?.accessToken //changed from user to accessToken to persist login after refresh
                 ? <Navigate to="/unauthorized" state={{ from: location }} replace />
                 : <Navigate to="/login" state={{ from: location }} replace />
     );
-};
+}
 
 export default RequireAuth;
