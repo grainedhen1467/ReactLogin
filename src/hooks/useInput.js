@@ -1,16 +1,32 @@
+import { useState, useEffect } from "react";
 import useLocalStorage from "./useLocalStorage"; // Importing useLocalStorage custom hook for local storage handling
 
-const useInput = (key, initValue) => { // Custom hook named useInput
-    const [value, setValue] = useLocalStorage(key, initValue); // Utilizing useLocalStorage hook to manage local storage
+const useInput = (key, initValue, useStorage) => {
+    const [value, setValue] = useState(initValue);
+    const [useLocalStorageValue, setUseLocalStorageValue] = useLocalStorage(key, initValue);
 
-    const reset = () => setValue(initValue); // Function to reset input value to initial value
+    const setInputValue = (newValue) => {
+        if (useStorage) {
+            setUseLocalStorageValue(newValue);
+        } else {
+            setValue(newValue);
+        }
+    };
 
-    const attributeObj = { // Object containing attributes for input element
-        value, // Current value
-        onChange: (e) => setValue(e.target.value) // Function to update value on input change
-    }
+    const reset = () => setInputValue(initValue);
 
-    return [value, reset, attributeObj]; // Returning current value, reset function, and attribute object
-}
+    useEffect(() => {
+        if (useStorage) {
+            setInputValue(useLocalStorageValue);
+        }
+    }, [useStorage, useLocalStorageValue]);
 
-export default useInput; // Exporting useInput custom hook
+    const attributeObj = {
+        value: useStorage ? useLocalStorageValue : value,
+        onChange: (e) => setInputValue(e.target.value),
+    };
+
+    return [useStorage ? useLocalStorageValue : value, reset, attributeObj];
+};
+
+export default useInput;
